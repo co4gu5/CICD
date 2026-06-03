@@ -1,7 +1,6 @@
-
 name: Hello World
 
-on: 
+on:
   workflow_dispatch:
   push:
     branches:
@@ -11,4 +10,4 @@ jobs:
   say-hello-inline-bash:
     runs-on: ubuntu-latest
     steps:
-      -run: 'echo "Hello, World!"'
+      - run: 'echo "Hello, World!"'
