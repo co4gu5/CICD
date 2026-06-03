@@ -1,0 +1,40 @@
+name: CD
+
+# Runs after the CI workflow finishes on main (orchestration across workflow files).
+on:
+  workflow_run:
+    workflows:
+      - CI
+    types:
+      - completed
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
+    environment:
+      name: production
+      url: https://github.com/${{ github.repository }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Simulate deployment
+        env:
+          PYTHONPATH: src
+        run: |
+          echo "Triggered by workflow: ${{ github.event.workflow_run.name }}"
+          echo "CI run URL: ${{ github.event.workflow_run.html_url }}"
+          python -c "from cicd_demo import __version__; from cicd_demo.greeting import greet; print(greet('production'))"
+          echo "Deploy complete (demo only — no real infrastructure)."

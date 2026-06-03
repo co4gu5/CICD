@@ -1,5 +1,6 @@
-name: Hello World
+name: Demo (quick smoke)
 
+# Lightweight workflow for trying Actions without the full CI/CD chain.
 on:
   workflow_dispatch:
   push:
@@ -7,7 +8,20 @@ on:
       - main
 
 jobs:
-  say-hello-inline-bash:
+  smoke:
     runs-on: ubuntu-latest
     steps:
-      - run: 'echo "Hello, World!"'
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run greeting from source
+        env:
+          PYTHONPATH: src
+        run: |
+          python -c "from cicd_demo.greeting import greet; print(greet('GitHub Actions'))"
+          echo "For full orchestration, run the Orchestrator workflow or push to main to trigger CI then CD."

@@ -1,0 +1,64 @@
+name: Orchestrator
+
+# Manual end-to-end pipeline: reusable test → reusable build → deploy job.
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment label
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+        default: staging
+      python-version:
+        description: Python version for test and build
+        required: false
+        type: string
+        default: "3.12"
+      skip-deploy:
+        description: Run test and build only
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Run reusable tests
+    uses: ./.github/workflows/reusable-test.yml
+    with:
+      python-version: ${{ inputs.python-version }}
+
+  build:
+    name: Run reusable build
+    needs: test
+    uses: ./.github/workflows/reusable-build.yml
+    with:
+      python-version: ${{ inputs.python-version }}
+
+  deploy:
+    name: Deploy package
+    needs: build
+    if: ${{ inputs.skip-deploy == false }}
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.environment }}
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-package
+
+      - name: Show package contents
+        run: |
+          unzip -l app-package.zip
+          echo "Deploying to environment: ${{ inputs.environment }}"
+          echo "Reusable test result: ${{ needs.test.outputs.test-result }}"
+          echo "Artifact from build: ${{ needs.build.outputs.artifact-name }}"
+
+      - name: Simulate deploy
+        run: echo "Deployment to ${{ inputs.environment }} finished (demo)."

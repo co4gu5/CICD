@@ -1,0 +1,36 @@
+name: Reusable Unit Tests
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: Python version for the test job
+        required: false
+        type: string
+        default: "3.12"
+    outputs:
+      test-result:
+        description: Outcome of the test job (success, failure, etc.)
+        value: ${{ jobs.test.result }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Lint with Ruff
+        run: ruff check src tests
+
+      - name: Run tests
+        run: pytest -v
