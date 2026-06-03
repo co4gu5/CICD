@@ -10,7 +10,7 @@ jobs:
 
       - run: echo "🐧 Running on ${{ runner.os }} server hosted by GitHub!"
 
-      - run: echo "🔎 Branch: ${{ github.ref }} | Repo: ${{ github.repository }}"
+      - run: 'echo "🔎 Branch: ${{ github.ref }} | Repo: ${{ github.repository }}"'
 
       - name: Checkout repository code
         uses: actions/checkout@v6
