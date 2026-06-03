@@ -6,9 +6,9 @@ jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 Job triggered by a ${{ github.event_name }} event."
+      - run: 'echo "🎉 Job triggered by a ${{ github.event_name }} event."'
 
-      - run: echo "🐧 Running on ${{ runner.os }} server hosted by GitHub!"
+      - run: 'echo "🐧 Running on ${{ runner.os }} server hosted by GitHub!"'
 
       - run: 'echo "🔎 Branch: ${{ github.ref }} | Repo: ${{ github.repository }}"'
 
@@ -18,4 +18,4 @@ jobs:
       - name: List files in the repository
         run: ls -la ${{ github.workspace }}
 
-      - run: echo "🍏 Job status: ${{ job.status }}"
+      - run: 'echo "🍏 Job status: ${{ job.status }}"'
